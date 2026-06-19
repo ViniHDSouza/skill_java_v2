@@ -1,0 +1,16 @@
+{
+  "name": "skill-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI coding assistant skills for Java/Spring Boot backend development",
+  "scripts": {
+    "skills:add": "npx skills add",
+    "skills:list": "npx skills list",
+    "skills:update": "npx skills update",
+    "skills:sync": "bash scripts/sync-skills.sh",
+    "skills:regenerate": "bash scripts/regenerate-configs.sh"
+  },
+  "devDependencies": {
+    "skills": "latest"
+  }
+}

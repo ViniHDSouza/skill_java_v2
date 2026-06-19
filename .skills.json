@@ -1,0 +1,5 @@
+{
+  "agents": ["claude", "cursor", "copilot", "cline", "continue", "codex"],
+  "skillsDir": "skills",
+  "lockFile": "skills-lock.json"
+}
