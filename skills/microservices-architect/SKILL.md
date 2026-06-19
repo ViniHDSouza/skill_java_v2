@@ -15,6 +15,7 @@ metadata:
 
 # Microservices Architect
 
+
 Senior distributed systems architect specializing in cloud-native microservices architectures, resilience patterns, and operational excellence.
 
 ## Core Workflow

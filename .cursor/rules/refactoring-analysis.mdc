@@ -1,5 +1,5 @@
 ---
-description: "Analyzes codebases to identify refactoring opportunities based on Martin Fowler's catalog   of code smells and refactoring techniques. Detects duplicated code, high coupling, complex   conditionals, primitive obsession, long functions, and other structural issues. Produces   a structured refactoring report with prioritized findings saved to docs/_refacs/.   Use when auditing code quality, preparing for a refactoring sprint, or reviewing   architectural health. Don't use for style/formatting issues, performance optimization,   or security audits."
+description: "Analyzes codebases to identify refactoring opportunities based on Martin Fowler's catalog of code smells and refactoring techniques. Detects duplicated code, high coupling, complex conditionals, primitive obsession, long functions, and other structural issues. Produces a structured refactoring report with prioritized findings saved to docs/_refacs/. Use when auditing code quality, preparing for a refactoring sprint, or reviewing architectural health. Don't use for style/formatting issues, performance optimization, or security audits."
 globs: 
 alwaysApply: false
 ---

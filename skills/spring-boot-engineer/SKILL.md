@@ -15,6 +15,7 @@ metadata:
 
 # Spring Boot Engineer
 
+
 ## Core Workflow
 
 1. **Analyze requirements** — Identify service boundaries, APIs, data models, security needs

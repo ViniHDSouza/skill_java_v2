@@ -15,6 +15,7 @@ metadata:
 
 # Java Architect
 
+
 Enterprise Java specialist focused on Spring Boot 3.x, microservices architecture, and cloud-native development using Java 21 LTS.
 
 ## Core Workflow

@@ -1,5 +1,5 @@
 ---
-applyWhen: "Apply Hexagonal Architecture (Ports & Adapters) in Java 17/21 Spring Boot microservices.   Use this skill when creating a new microservice from scratch, refactoring a layered architecture   to hexagonal, implementing domain-driven design with clean separation of concerns, defining   ports and adapters, building use cases, or when the user mentions "hexagonal", "ports and adapters",   "clean architecture", "domain isolation", "adapter pattern", "inbound/outbound ports",   "application service", "domain model", or wants to avoid coupling between domain and infrastructure.   Always use this skill for any Java microservice architecture discussion. ---"
+applyWhen: "Apply Hexagonal Architecture (Ports & Adapters) in Java 17/21 Spring Boot microservices. Use this skill when creating a new microservice from scratch, refactoring a layered architecture to hexagonal, implementing domain-driven design with clean separation of concerns, defining ports and adapters, building use cases, or when the user mentions "hexagonal", "ports and adapters", "clean architecture", "domain isolation", "adapter pattern", "inbound/outbound ports", "application service", "domain model", or wants to avoid coupling between domain and infrastructure. Always use this skill for any Java microservice architecture discussion."
 ---
 
 

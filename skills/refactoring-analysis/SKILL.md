@@ -15,6 +15,7 @@ metadata:
 ---
 # Refactoring Analysis
 
+
 Perform a systematic analysis of a codebase to identify refactoring opportunities based on
 Martin Fowler's "Refactoring: Improving the Design of Existing Code" (2nd Edition).
 Produce a prioritized report with actionable findings.

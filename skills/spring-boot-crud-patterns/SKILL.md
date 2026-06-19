@@ -6,6 +6,7 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 
 # Spring Boot CRUD Patterns
 
+
 ## Overview
 
 Provides complete CRUD workflows for Spring Boot 3.5+ services using feature-focused architecture. Creates and validates domain aggregates, JPA repositories, application services, and REST controllers with proper separation of concerns. Defer detailed code listings to reference files for progressive disclosure.

@@ -8,6 +8,7 @@ metadata:
 ---
 # Architectural Analysis
 
+
 ## Instructions
 
 Perform comprehensive architectural audit focused on structural issues, dead code, duplication, and systemic problems.

@@ -1,0 +1,291 @@
+---
+name: microservices-review
+description: >
+  Automated checklist review for Java/Spring Boot microservices covering Resilience,
+  Security, Performance, Observability, and Tests. Use this skill when reviewing a microservice
+  before going to production, doing code review focused on architecture quality, auditing
+  an existing service, checking if a new service follows team standards, or when the user asks
+  to "review my microservice", "check production readiness", "audit this service", "validate
+  architecture", "review for resilience", "check security", "review observability",
+  "check test coverage", or "is my service production ready".
+  Always use this skill for any microservice quality review or production readiness check.
+---
+
+# Microservices Review — Checklist de Prontidão para Produção
+
+
+## Como Usar Esta Skill
+
+Ao receber código ou descrição de um microserviço, execute o review nas 5 dimensões abaixo.
+Para cada item, classifique como: ✅ OK | ⚠️ Atenção | ❌ Crítico | ➖ Não Aplicável
+
+Gere um relatório final com score por dimensão e lista de ações priorizadas.
+
+---
+
+## 1. 🛡️ RESILIÊNCIA
+
+### Circuit Breaker
+```
+□ Resilience4j CircuitBreaker configurado para chamadas HTTP externas (Feign/RestClient)
+□ Timeout definido para todas as chamadas externas (não depende do timeout padrão)
+□ Fallback implementado para degradação graciosa (retornar cache ou valor default)
+□ Retry com backoff exponencial (não retry imediato que pode piorar a situação)
+□ Bulkhead configurado para isolar falhas de dependências externas
+```
+
+**Verificar no código:**
+```java
+// Esperado: Feign com Resilience4j
+@FeignClient(name = "payment-service", configuration = FeignResilienceConfig.class)
+public interface PaymentClient {
+    @GetMapping("/payments/{id}")
+    @CircuitBreaker(name = "payment-service", fallbackMethod = "getPaymentFallback")
+    @TimeLimiter(name = "payment-service")
+    PaymentResponse getPayment(@PathVariable String id);
+
+    default PaymentResponse getPaymentFallback(String id, Exception e) {
+        log.warn("Fallback ativado para payment-service: {}", e.getMessage());
+        return PaymentResponse.unknown(id);  // degradação graciosa
+    }
+}
+```
+
+### Mensageria
+```
+□ DLQ (Dead Letter Queue) configurada para Kafka e/ou RabbitMQ
+□ Retry com limite máximo de tentativas (evitar poison messages em loop)
+□ Idempotência garantida nos consumers (processamento duplicado seguro)
+□ Outbox Pattern para publicação transacional (sem publicar antes do commit)
+□ Acknowledge manual (nunca auto-commit)
+```
+
+### Banco de Dados
+```
+□ Connection pool dimensionado (HikariCP: max 20-50 para cargas típicas)
+□ Timeout de query configurado (evitar queries longas travarem tudo)
+□ @Transactional apenas onde necessário (não em controllers)
+□ @Transactional(readOnly = true) em operações de leitura
+□ Índices criados para colunas usadas em WHERE/JOIN frequentes
+```
+
+---
+
+## 2. 🔐 SEGURANÇA
+
+### Autenticação & Autorização
+```
+□ Todos os endpoints protegidos (sem endpoints abertos por descuido)
+□ JWT validado: assinatura, expiração, issuer
+□ Method-level security (@PreAuthorize) onde necessário
+□ Segredos externalizados (NUNCA hardcoded, NUNCA no application.yml commitado)
+□ Segredos gerenciados por Vault, AWS Secrets Manager, ou Azure Key Vault
+```
+
+**Verificar no código:**
+```java
+// ❌ NUNCA: segredo hardcoded
+private static final String JWT_SECRET = "minha-chave-super-secreta-123";
+
+// ✅ CORRETO: injetado via environment
+@Value("${security.jwt.secret}")
+private String jwtSecret;
+// E no ambiente: JWT_SECRET=<valor-do-vault>
+```
+
+### Validação de Input
+```
+□ @Valid + Bean Validation em todos os @RequestBody
+□ Validação de tamanho máximo (evitar payloads gigantes)
+□ Sanitização de dados antes de usar em queries (uso de JPA/PreparedStatement)
+□ Sem SQL dinâmico concatenado com input do usuário
+□ Rate limiting configurado (Spring Cloud Gateway ou filtro próprio)
+```
+
+### Headers de Segurança
+```
+□ CORS configurado explicitamente (não '*' em produção)
+□ Content-Security-Policy configurado
+□ X-Frame-Options: DENY
+□ Strict-Transport-Security (HTTPS obrigatório)
+□ CSRF desabilitado apenas para APIs stateless (JWT) — habilitado para apps com sessão
+```
+
+### Dependências
+```
+□ Nenhuma dependência com CVE crítica (verificar com OWASP Dependency-Check ou Snyk)
+□ Spring Boot na versão LTS mais recente (não versões EOL)
+□ Imagem Docker usando imagem base não-root
+□ Imagem Docker com usuário não-root configurado
+```
+
+---
+
+## 3. ⚡ PERFORMANCE
+
+### API
+```
+□ Paginação implementada em endpoints que retornam listas (nunca retornar tudo sem limite)
+□ Projeções JPA (DTOs) em vez de entidades completas quando só precisa de alguns campos
+□ N+1 queries eliminadas (usar JOIN FETCH ou @BatchSize)
+□ Cache implementado para dados que mudam raramente (Spring Cache + Redis)
+□ Compressão GZIP habilitada para respostas grandes
+```
+
+**Verificar no código:**
+```java
+// ❌ N+1 Problem
+List<Order> orders = orderRepository.findAll();
+orders.forEach(o -> o.getItems().size()); // query por pedido!
+
+// ✅ CORRETO: JOIN FETCH
+@Query("SELECT o FROM Order o JOIN FETCH o.items WHERE o.status = :status")
+List<Order> findByStatusWithItems(@Param("status") OrderStatus status);
+
+// ✅ CORRETO: Paginação obrigatória
+@GetMapping("/orders")
+public Page<OrderResponse> list(Pageable pageable) {
+    return orderRepository.findAll(pageable).map(OrderResponse::from);
+}
+```
+
+### JVM & Virtual Threads
+```
+□ Java 21 com Virtual Threads habilitados (spring.threads.virtual.enabled=true)
+□ Nenhum synchronized em hot paths (usar ReentrantLock)
+□ GC configurado (ZGC ou G1 para Java 21)
+□ Heap dimensionado para o workload (-Xms e -Xmx configurados)
+□ Thread dump e heap dump habilitados para diagnóstico em produção
+```
+
+### Banco de Dados
+```
+□ explain analyze executado nas queries principais
+□ Connection pool não superestimado (mais threads != mais performance com pool grande)
+□ Lazy loading configurado por padrão (EAGER apenas quando necessário e justificado)
+□ Índices compostos quando há filtros múltiplos frequentes
+```
+
+---
+
+## 4. 🔭 OBSERVABILIDADE
+
+### Logs
+```
+□ Structured logging (JSON) configurado para produção
+□ Correlation ID (traceId/spanId) presente em todos os logs
+□ Log level apropriado (INFO em produção, DEBUG nunca em produção)
+□ Informações sensíveis não logadas (senhas, tokens, CPF, cartão)
+□ Logs de entrada/saída em operações críticas de negócio
+```
+
+**Configuração esperada:**
+```yaml
+logging:
+  pattern:
+    console: "%d{ISO8601} [%X{traceId},%X{spanId}] %-5level %logger{36} - %msg%n"
+  level:
+    root: INFO
+    com.empresa: INFO  # nunca DEBUG em produção
+```
+
+### Métricas
+```
+□ Micrometer + Prometheus configurado
+□ /actuator/prometheus endpoint exposto (restrito à rede interna)
+□ Métricas de negócio customizadas (ex: pedidos criados/min, erros de pagamento)
+□ SLA endpoints monitorados (latência p50, p95, p99)
+□ JVM metrics exportadas (heap, GC, threads)
+```
+
+### Tracing
+```
+□ Distributed tracing configurado (Micrometer Tracing + Zipkin/Jaeger/OTLP)
+□ TraceId propagado entre serviços via headers HTTP e mensageria
+□ Sampling rate configurado (100% em dev, 10-20% em prod)
+□ Spans customizados para operações críticas de negócio
+```
+
+### Health Checks
+```
+□ /actuator/health/liveness configurado (app está vivo?)
+□ /actuator/health/readiness configurado (app pode receber tráfego?)
+□ Health checks das dependências (DB, Kafka, serviços externos)
+□ Kubernetes liveness e readiness probes configurados
+□ Graceful shutdown habilitado (spring.lifecycle.timeout-per-shutdown-phase=30s)
+```
+
+---
+
+## 5. 🧪 TESTES
+
+### Cobertura
+```
+□ Cobertura mínima de 80% nas classes de domínio e serviço
+□ Testes unitários rápidos (< 50ms por teste, sem Spring context)
+□ Testes de integração com Testcontainers (banco de dados, Kafka, Redis reais)
+□ Testes de contrato (Spring Cloud Contract ou Pact) para APIs consumidas
+□ Testes de componente via @SpringBootTest para fluxos críticos
+```
+
+### Qualidade dos Testes
+```
+□ Testes testam COMPORTAMENTO, não implementação interna
+□ Mocks usados apenas para dependências externas (não para classes internas)
+□ Nomenclatura clara: "deve_criar_pedido_quando_estoque_disponivel()"
+□ Arrange/Act/Assert separados claramente
+□ Sem lógica condicional nos testes (if/switch)
+□ Sem testes que dependem de ordem de execução
+```
+
+### Testes de Resiliência
+```
+□ Teste do cenário de falha do circuit breaker
+□ Teste do consumer kafka/rabbitmq com mensagem inválida (DLQ)
+□ Teste de timeout nas chamadas externas
+□ Teste de idempotência (processar mesma mensagem duas vezes)
+```
+
+---
+
+## Relatório de Score
+
+Após avaliar todos os itens, gere um relatório no formato:
+
+```
+═══════════════════════════════════════════════════════════
+  MICROSERVICE REVIEW — [Nome do Serviço]
+═══════════════════════════════════════════════════════════
+
+  RESILIÊNCIA    [██████████] 10/12 (83%) ⚠️
+  SEGURANÇA      [████████░░]  8/10 (80%) ⚠️
+  PERFORMANCE    [████████████] 9/9 (100%) ✅
+  OBSERVABILIDADE [██████░░░░] 6/10 (60%) ❌
+  TESTES         [████████░░]  8/10 (80%) ⚠️
+
+  SCORE GERAL: 82% — Requer atenção antes de produção
+
+═══════════════════════════════════════════════════════════
+  AÇÕES CRÍTICAS (resolver antes de deploy):
+  ❌ [OBSERVABILIDADE] Distributed tracing não configurado
+  ❌ [SEGURANÇA] CVE crítica na dependência jackson-databind:2.9.8
+
+  AÇÕES DE ATENÇÃO (resolver em até 2 sprints):
+  ⚠️ [RESILIÊNCIA] Timeout não configurado para Feign client de pagamentos
+  ⚠️ [RESILIÊNCIA] DLQ configurada mas sem consumer/monitoramento
+  ⚠️ [TESTES] Cobertura de 62% no OrderService (mínimo 80%)
+  ⚠️ [SEGURANÇA] CORS configurado com '*' — restringir para domínios conhecidos
+
+  BOAS PRÁTICAS JÁ IMPLEMENTADAS:
+  ✅ Virtual Threads habilitado
+  ✅ Paginação em todos os endpoints de lista
+  ✅ N+1 queries eliminadas
+  ✅ Circuit Breaker configurado para payment-service
+═══════════════════════════════════════════════════════════
+```
+
+## Referências
+
+- Para revisar código de resiliência: `references/resilience-patterns.md`
+- Para revisar segurança em detalhe: `references/security-checklist.md`
+- Para revisar performance de queries: `references/performance-queries.md`

@@ -6,6 +6,7 @@ allowed-tools: Read, Write, Edit, Bash
 
 # Spring Boot Event-Driven Patterns
 
+
 ## Overview
 
 Implement Event-Driven Architecture (EDA) patterns in Spring Boot 3.x using domain events, ApplicationEventPublisher, `@TransactionalEventListener`, and distributed messaging with Kafka and Spring Cloud Stream.
