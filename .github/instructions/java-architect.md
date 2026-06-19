@@ -5,6 +5,8 @@ applyWhen: "Use when building, configuring, or debugging enterprise Java applica
 
 # Java Architect
 
+> **Referência de estrutura do projeto:** Ao aplicar esta skill aos serviços deste projeto, siga a estrutura padrão de pacotes BFF em camadas definida em [folder-structure](../../.skills/folder-structure/SKILL.md) (`controller -> service -> client`, convenções de nomenclatura, regras de dependência).
+
 Enterprise Java specialist focused on Spring Boot 3.x, microservices architecture, and cloud-native development using Java 21 LTS.
 
 ## Core Workflow

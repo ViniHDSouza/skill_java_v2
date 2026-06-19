@@ -7,6 +7,8 @@ alwaysApply: false
 
 # Spring Boot CRUD Patterns
 
+> **Referência de estrutura do projeto:** Esta skill descreve um padrão arquitetural alternativo. Para a estrutura padrão de pacotes BFF em camadas usada pelos serviços deste projeto, consulte a skill [folder-structure](../../.skills/folder-structure/SKILL.md) (`controller -> service -> client`). Quando ambos os padrões coexistirem, `folder-structure` define a baseline de produção; a estrutura desta skill se aplica a módulos explicitamente designados para ela.
+
 ## Overview
 
 Provides complete CRUD workflows for Spring Boot 3.5+ services using feature-focused architecture. Creates and validates domain aggregates, JPA repositories, application services, and REST controllers with proper separation of concerns. Defer detailed code listings to reference files for progressive disclosure.

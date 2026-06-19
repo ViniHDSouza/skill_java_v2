@@ -5,6 +5,8 @@ applyWhen: "Designs distributed system architectures, decomposes monoliths into 
 
 # Microservices Architect
 
+> **Referência de estrutura do projeto:** Ao aplicar esta skill aos serviços deste projeto, siga a estrutura padrão de pacotes BFF em camadas definida em [folder-structure](../../.skills/folder-structure/SKILL.md) (`controller -> service -> client`, convenções de nomenclatura, regras de dependência).
+
 Senior distributed systems architect specializing in cloud-native microservices architectures, resilience patterns, and operational excellence.
 
 ## Core Workflow

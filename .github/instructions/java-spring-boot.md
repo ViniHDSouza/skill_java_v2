@@ -5,6 +5,8 @@ applyWhen: "Build production Spring Boot applications - REST APIs, Security, Dat
 
 # Java Spring Boot Skill
 
+> **Referência de estrutura do projeto:** Ao aplicar esta skill aos serviços deste projeto, siga a estrutura padrão de pacotes BFF em camadas definida em [folder-structure](../../.skills/folder-structure/SKILL.md) (`controller -> service -> client`, convenções de nomenclatura, regras de dependência).
+
 Build production-ready Spring Boot applications with modern best practices.
 
 ## Overview

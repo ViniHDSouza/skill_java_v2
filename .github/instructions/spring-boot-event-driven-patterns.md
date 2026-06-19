@@ -5,6 +5,8 @@ applyWhen: "Provides Event-Driven Architecture (EDA) patterns for Spring Boot �
 
 # Spring Boot Event-Driven Patterns
 
+> **Referência de estrutura do projeto:** Ao aplicar esta skill aos serviços deste projeto, siga a estrutura padrão de pacotes BFF em camadas definida em [folder-structure](../../.skills/folder-structure/SKILL.md) (`controller -> service -> client`, convenções de nomenclatura, regras de dependência).
+
 ## Overview
 
 Implement Event-Driven Architecture (EDA) patterns in Spring Boot 3.x using domain events, ApplicationEventPublisher, `@TransactionalEventListener`, and distributed messaging with Kafka and Spring Cloud Stream.

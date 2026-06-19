@@ -4,6 +4,8 @@ applyWhen: "Deep architectural audit focused on finding dead code, duplicated fu
 
 # Architectural Analysis
 
+> **Referência de estrutura do projeto:** Ao revisar ou analisar os serviços deste projeto, valide contra a estrutura padrão de pacotes BFF em camadas definida em [folder-structure](../../.skills/folder-structure/SKILL.md) (`controller -> service -> client`, convenções de nomenclatura, regras de dependência entre camadas, anti-patterns).
+
 ## Instructions
 
 Perform comprehensive architectural audit focused on structural issues, dead code, duplication, and systemic problems.

@@ -5,6 +5,8 @@ applyWhen: "Automated checklist review for Java/Spring Boot microservices coveri
 
 # Microservices Review — Checklist de Prontidão para Produção
 
+> **Referência de estrutura do projeto:** Ao revisar ou analisar os serviços deste projeto, valide contra a estrutura padrão de pacotes BFF em camadas definida em [folder-structure](../../.skills/folder-structure/SKILL.md) (`controller -> service -> client`, convenções de nomenclatura, regras de dependência entre camadas, anti-patterns).
+
 ## Como Usar Esta Skill
 
 Ao receber código ou descrição de um microserviço, execute o review nas 5 dimensões abaixo.

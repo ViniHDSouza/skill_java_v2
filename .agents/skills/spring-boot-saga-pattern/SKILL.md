@@ -6,6 +6,8 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 
 # Spring Boot Saga Pattern
 
+> **Referência de estrutura do projeto:** Ao aplicar esta skill aos serviços deste projeto, siga a estrutura padrão de pacotes BFF em camadas definida em [folder-structure](../../../.skills/folder-structure/SKILL.md) (`controller -> service -> client`, convenções de nomenclatura, regras de dependência).
+
 ## Overview
 
 Implements distributed transactions across microservices using the Saga Pattern. Replaces two-phase commit with a sequence of local transactions and compensating actions. Supports choreography (event-driven) and orchestration (centralized coordinator) approaches with Kafka, RabbitMQ, or Axon Framework.

@@ -5,6 +5,8 @@ applyWhen: "Apply Hexagonal Architecture (Ports & Adapters) in Java 17/21 Spring
 
 # Hexagonal Architecture — Java 17/21 + Spring Boot
 
+> **Referência de estrutura do projeto:** Esta skill descreve um padrão arquitetural alternativo. Para a estrutura padrão de pacotes BFF em camadas usada pelos serviços deste projeto, consulte a skill [folder-structure](../../.skills/folder-structure/SKILL.md) (`controller -> service -> client`). Quando ambos os padrões coexistirem, `folder-structure` define a baseline de produção; a estrutura desta skill se aplica a módulos explicitamente designados para ela.
+
 ## Filosofia Central
 
 > **O domínio não conhece o mundo externo. O mundo externo se adapta ao domínio.**

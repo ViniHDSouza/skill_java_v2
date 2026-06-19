@@ -7,6 +7,8 @@ alwaysApply: false
 
 # Java Microservices Skill
 
+> **Referência de estrutura do projeto:** Ao aplicar esta skill aos serviços deste projeto, siga a estrutura padrão de pacotes BFF em camadas definida em [folder-structure](../../.skills/folder-structure/SKILL.md) (`controller -> service -> client`, convenções de nomenclatura, regras de dependência).
+
 Build production microservices with Spring Cloud and distributed system patterns.
 
 ## Overview
