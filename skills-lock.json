@@ -1,0 +1,257 @@
+{
+  "version": 1,
+  "skills": {
+    "architectural-analysis": {
+      "source": "pedronauck/skills",
+      "sourceType": "github",
+      "skillPath": "skills/mine/architectural-analysis/SKILL.md",
+      "computedHash": "0ea364388a55bd499dd8a15e5fb289e7855cf5846698cc1d16d64be74d3b6eb6"
+    },
+    "argocd-expert": {
+      "source": "pedronauck/skills",
+      "sourceType": "github",
+      "skillPath": "skills/community/argocd-expert/SKILL.md",
+      "computedHash": "93b53c7ea99126ee0176899c1722879b55d249dc0ead34735257cdc6a9eaf511"
+    },
+    "azure-diagnostics": {
+      "source": "microsoft/azure-skills",
+      "sourceType": "github",
+      "skillPath": "skills/azure-diagnostics/SKILL.md",
+      "computedHash": "8bf4e13fe6b69e16f40a3cf28a5f81376a0c3aef030d55b7e31c289a2cec8301"
+    },
+    "azure-messaging": {
+      "source": "microsoft/azure-skills",
+      "sourceType": "github",
+      "skillPath": "skills/azure-messaging/SKILL.md",
+      "computedHash": "1cdfc5fb561e66529cc44f1ce9d5dea598835b3eb115d6076c878b5ef501c6e4"
+    },
+    "azure-reliability": {
+      "source": "microsoft/azure-skills",
+      "sourceType": "github",
+      "skillPath": "skills/azure-reliability/SKILL.md",
+      "computedHash": "058f5c2ad3522250404193ed12b989005d474ca80a06d2ed413b02fdc368a957"
+    },
+    "chaos-engineer": {
+      "source": "jeffallan/claude-skills",
+      "sourceType": "github",
+      "skillPath": "skills/chaos-engineer/SKILL.md",
+      "computedHash": "504c11eca1046d246f33a8e3e2a1d024c3dfd4398289f411f4ea15247962b88b"
+    },
+    "devops-engineer": {
+      "source": "pedronauck/skills",
+      "sourceType": "github",
+      "skillPath": "skills/community/devops-engineer/SKILL.md",
+      "computedHash": "ef4a12779a3f0a183f2d9bc1c0b8e0052a13d6cb6f788dd144cb20d40aa65c06"
+    },
+    "git-rebase": {
+      "source": "pedronauck/skills",
+      "sourceType": "github",
+      "skillPath": "skills/mine/git-rebase/SKILL.md",
+      "computedHash": "835668c7df210de19bb92ee86cbb7a33e3d2479ab7e259f784b028012c9cd78e"
+    },
+    "improve-codebase-architecture": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/improve-codebase-architecture/SKILL.md",
+      "computedHash": "4c4d2b6da48482c1a054aca0e09eafd61cdcbebe2bda10abd3f355bf5f6fc57c"
+    },
+    "java-architect": {
+      "source": "jeffallan/claude-skills",
+      "sourceType": "github",
+      "skillPath": "skills/java-architect/SKILL.md",
+      "computedHash": "7f202287a1ad819b41a9235b8bb570eed217a431e4e60d7196fd9330d52001c2"
+    },
+    "java-concurrency": {
+      "source": "pluginagentmarketplace/custom-plugin-java",
+      "sourceType": "github",
+      "skillPath": "skills/java-concurrency/SKILL.md",
+      "computedHash": "30a6a2994542103db7fb3b1531c742dd1e6b4801ca05db714a02099a28a385de"
+    },
+    "java-docker": {
+      "source": "pluginagentmarketplace/custom-plugin-java",
+      "sourceType": "github",
+      "skillPath": "skills/java-docker/SKILL.md",
+      "computedHash": "42914a2680a30dc465ffb0110d20e0d94aab3f88e0d473c9d6f1e3016a16f833"
+    },
+    "java-fundamentals": {
+      "source": "pluginagentmarketplace/custom-plugin-java",
+      "sourceType": "github",
+      "skillPath": "skills/java-fundamentals/SKILL.md",
+      "computedHash": "ac351c260ab6c76ba8f728103dfcd432e16b5e2d28428c8684cf451c7f83e071"
+    },
+    "java-gradle": {
+      "source": "pluginagentmarketplace/custom-plugin-java",
+      "sourceType": "github",
+      "skillPath": "skills/java-gradle/SKILL.md",
+      "computedHash": "26d0d5576aa368eb8ab2cca872040820de23a0f611d8871d3e09aa910de8461d"
+    },
+    "java-jpa-hibernate": {
+      "source": "pluginagentmarketplace/custom-plugin-java",
+      "sourceType": "github",
+      "skillPath": "skills/java-jpa-hibernate/SKILL.md",
+      "computedHash": "16d57e6fc655423b66191c0b9e9bca7b59080d8a06f9740a9f5cde9a2d9c082e"
+    },
+    "java-maven": {
+      "source": "pluginagentmarketplace/custom-plugin-java",
+      "sourceType": "github",
+      "skillPath": "skills/java-maven/SKILL.md",
+      "computedHash": "7128cd4b59cc52c661a6a209af74063e1fc6523b70abaf19f28c885ed085c01b"
+    },
+    "java-microservices": {
+      "source": "pluginagentmarketplace/custom-plugin-java",
+      "sourceType": "github",
+      "skillPath": "skills/java-microservices/SKILL.md",
+      "computedHash": "d4c0c5e302e75041d4eb9bf0782110d2fd1efcdf23efe650bac3122816aa9ec4"
+    },
+    "java-performance": {
+      "source": "pluginagentmarketplace/custom-plugin-java",
+      "sourceType": "github",
+      "skillPath": "skills/java-performance/SKILL.md",
+      "computedHash": "e24625f8183d1615bcca5185796e943aecf84ce099b2683f4c7e40f92c9fdb01"
+    },
+    "java-spring-boot": {
+      "source": "pluginagentmarketplace/custom-plugin-java",
+      "sourceType": "github",
+      "skillPath": "skills/java-spring-boot/SKILL.md",
+      "computedHash": "c1d1523ec6ead1de3c7efd73e7a6041af983ef0dc38ae2050f75c6375ba6b7ae"
+    },
+    "java-testing": {
+      "source": "pluginagentmarketplace/custom-plugin-java",
+      "sourceType": "github",
+      "skillPath": "skills/java-testing/SKILL.md",
+      "computedHash": "e58bdbcc271dfc689ce8b67c54a6dade5bcfb7c2c68e2615be2b39b8915ac1a0"
+    },
+    "java-testing-advanced": {
+      "source": "pluginagentmarketplace/custom-plugin-java",
+      "sourceType": "github",
+      "skillPath": "skills/java-testing-advanced/SKILL.md",
+      "computedHash": "3fc54d8ca445eff764926e14c5260674750064872e568e89e977854bd71d2137"
+    },
+    "kubernetes-specialist": {
+      "source": "pedronauck/skills",
+      "sourceType": "github",
+      "skillPath": "skills/community/kubernetes-specialist/SKILL.md",
+      "computedHash": "ece27db19c70f0ea5727f7c1b04210ca1505ca005bb2332e1939a7614efdea78"
+    },
+    "microservices-architect": {
+      "source": "jeffallan/claude-skills",
+      "sourceType": "github",
+      "skillPath": "skills/microservices-architect/SKILL.md",
+      "computedHash": "c7e6f0ae69484d03083217cbcae342a23f6555f156917c54630bd20e63ace1ad"
+    },
+    "no-workarounds": {
+      "source": "pedronauck/skills",
+      "sourceType": "github",
+      "skillPath": "skills/mine/no-workarounds/SKILL.md",
+      "computedHash": "9152740f30281b732197a5dc9adaaeb7bcdd3a54bb21617826392bdbec4d44b0"
+    },
+    "refactoring-analysis": {
+      "source": "pedronauck/skills",
+      "sourceType": "github",
+      "skillPath": "skills/mine/refactoring-analysis/SKILL.md",
+      "computedHash": "366269a0dc0365377f51f6d2158069d56c164d3255c3025dfe0b2883818df627"
+    },
+    "secure-code-guardian": {
+      "source": "jeffallan/claude-skills",
+      "sourceType": "github",
+      "skillPath": "skills/secure-code-guardian/SKILL.md",
+      "computedHash": "f140b4582963766a374047e417792459f19f7964dd7aa5b76c5ca3cadcd6fdf9"
+    },
+    "skill-best-practices": {
+      "source": "pedronauck/skills",
+      "sourceType": "github",
+      "skillPath": "skills/mine/skill-best-practices/SKILL.md",
+      "computedHash": "8dee71c5364b38fd8657f3372c7f4d43912bac9f5ce661c7c2dd5e6e9977a3a6"
+    },
+    "skill-creator": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "skills/skill-creator/SKILL.md",
+      "computedHash": "7e3c9cd74e9e2b4828527a857170e86310f2dab5ea8030a9043df2c7e6c88857"
+    },
+    "spring-boot-crud-patterns": {
+      "source": "giuseppe-trisciuoglio/developer-kit",
+      "sourceType": "github",
+      "skillPath": "plugins/developer-kit-java/skills/spring-boot-crud-patterns/SKILL.md",
+      "computedHash": "121abfe5b499eaaf39b6340a5f9364652f1ada91b518edbe349011ace3dce916"
+    },
+    "spring-boot-engineer": {
+      "source": "jeffallan/claude-skills",
+      "sourceType": "github",
+      "skillPath": "skills/spring-boot-engineer/SKILL.md",
+      "computedHash": "293d15785cda1eaebdce24f99a6f363be5c25390e383324df1feeda158bba10d"
+    },
+    "spring-boot-event-driven-patterns": {
+      "source": "giuseppe-trisciuoglio/developer-kit",
+      "sourceType": "github",
+      "skillPath": "plugins/developer-kit-java/skills/spring-boot-event-driven-patterns/SKILL.md",
+      "computedHash": "1741fc29e31a24e436754c10a3fe4029674a90641655c12c5913888399a31991"
+    },
+    "spring-boot-saga-pattern": {
+      "source": "giuseppe-trisciuoglio/developer-kit",
+      "sourceType": "github",
+      "skillPath": "plugins/developer-kit-java/skills/spring-boot-saga-pattern/SKILL.md",
+      "computedHash": "199c6d1e1c2b673403bb4168faeb10e89928c8fbc0ad7c42c358f55d14ed66c7"
+    },
+    "spring-boot-security-jwt": {
+      "source": "giuseppe-trisciuoglio/developer-kit",
+      "sourceType": "github",
+      "skillPath": "plugins/developer-kit-java/skills/spring-boot-security-jwt/SKILL.md",
+      "computedHash": "f04cfa9e9e9cc68eefbfc7eb9e7a8d4f7e23f1a5545894f94aa88ce2dc2fe065"
+    },
+    "systematic-debugging": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "skillPath": "skills/systematic-debugging/SKILL.md",
+      "computedHash": "792a368e074981d7e3138edb439e138489b2ac247cd1e5739fab52af680fb17b"
+    },
+    "tdd": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/tdd/SKILL.md",
+      "computedHash": "5d94c0930f58405485bbac1f7bb2dce7ed833702257912a63dcaf03c8e83d78e"
+    },
+    "test-driven-development": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "skillPath": "skills/test-driven-development/SKILL.md",
+      "computedHash": "eee144aea35d783296d178017e9fe843c6d16cc8b240e106f5e50910f6caf329"
+    },
+    "testing-boss": {
+      "source": "pedronauck/skills",
+      "sourceType": "github",
+      "skillPath": "skills/mine/testing-boss/SKILL.md",
+      "computedHash": "b7a0176ccdd3e3b16b9bfb4f35949d088930915beb9fcd85ad4fd81b34040250"
+    },
+    "to-issues": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/to-issues/SKILL.md",
+      "computedHash": "c1bfbb12c04ebfc14225a5553ec95acc42a57d09ae78e58377c648107b9605ed"
+    },
+    "to-prd": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/to-prd/SKILL.md",
+      "computedHash": "7e1950ebb84721293b913d54481e0723172abb23fa5e0d0d488594ca45ffb421"
+    },
+    "unit-test-caching": {
+      "source": "giuseppe-trisciuoglio/developer-kit",
+      "sourceType": "github",
+      "skillPath": "plugins/developer-kit-java/skills/unit-test-caching/SKILL.md",
+      "computedHash": "4d49995591cd14f1500a615193682d1ebcaef1d5b764b2914df32f7b27f9171d"
+    },
+    "verification-before-completion": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "skillPath": "skills/verification-before-completion/SKILL.md",
+      "computedHash": "9b446f0c7fe1cfb560b1d34439523b1a76d5f177290007b2c053a1c749a4a8ba"
+    },
+    "webapp-testing": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "skills/webapp-testing/SKILL.md",
+      "computedHash": "3f14af7f5690695209c22fbf8c8d133769a86d64892602c09bb13f135e14e857"
+    }
+  }
+}
