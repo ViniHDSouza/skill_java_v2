@@ -76,6 +76,7 @@ Cada skill vive em `skills/<nome>/SKILL.md`. A fonte de verdade é `.agents/skil
 | `chaos-engineer` | Designs chaos experiments, creates failure injection frameworks, and facilitates game day exercises for distributed systems — producing runbooks, experiment… | [skills/chaos-engineer/SKILL.md](skills/chaos-engineer/SKILL.md) |
 | `creating-spec` | Create comprehensive technical specs for SDK gaps, feature modules, or system centralization efforts. | [skills/creating-spec/SKILL.md](skills/creating-spec/SKILL.md) |
 | `devops-engineer` | Creates Dockerfiles, configures CI/CD pipelines, writes Kubernetes manifests, and generates Terraform/Pulumi infrastructure templates. | [skills/devops-engineer/SKILL.md](skills/devops-engineer/SKILL.md) |
+| `estrutura-pastas` | Mapeia e documenta a estrutura real de pastas/pacotes do backend do projeto atual e a responsabilidade de cada pasta, gerando o arquivo… | [skills/estrutura-pastas/SKILL.md](skills/estrutura-pastas/SKILL.md) |
 | `git-rebase` | Intelligently handle git rebase operations and resolve merge conflicts while preserving features and maintaining code quality. | [skills/git-rebase/SKILL.md](skills/git-rebase/SKILL.md) |
 | `hexagonal-architecture` | Apply Hexagonal Architecture (Ports & Adapters) in Java 17/21 Spring Boot microservices. | [skills/hexagonal-architecture/SKILL.md](skills/hexagonal-architecture/SKILL.md) |
 | `html-to-md` | Converts HTML and HTM files to clean, well-structured Markdown (.md). | [skills/html-to-md/SKILL.md](skills/html-to-md/SKILL.md) |
@@ -193,7 +194,7 @@ Checklist obrigatório antes de abrir o PR:
 ```text
 skill_java_v2/
 ├── .skills/folder-structure/   # regra obrigatória de estrutura (camadas BFF)
-├── skills/                     # 66 skills — fonte legível (SKILL.md + scripts/assets)
+├── skills/                     # 67 skills — fonte legível (SKILL.md + scripts/assets)
 ├── .agents/skills/             # fonte de verdade das skills
 ├── .claude/ .codex/ .devin/ .opencode/   # skills por ferramenta (cópia integral)
 ├── .cursor/rules/              # skills como regras .mdc
