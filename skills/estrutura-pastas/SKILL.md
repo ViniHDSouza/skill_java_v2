@@ -4,6 +4,7 @@ description: 'Mapeia e documenta a estrutura real de pastas/pacotes do backend d
 argument-hint: 'Caminho do módulo/projeto backend a mapear (opcional; por padrão, a raiz atual)'
 ---
 
+
 # Estrutura de Pastas (Baseline da Arquitetura)
 
 Esta skill **inspeciona o projeto backend atual**, descreve **a estrutura real de pastas/pacotes** e

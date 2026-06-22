@@ -5,7 +5,7 @@ applyWhen: "Provides Event-Driven Architecture (EDA) patterns for Spring Boot �
 
 # Spring Boot Event-Driven Patterns
 
-> **Referência de estrutura do projeto:** Ao aplicar esta skill aos serviços deste projeto, siga a estrutura padrão de pacotes BFF em camadas definida em [folder-structure](../../.skills/folder-structure/SKILL.md) (`controller -> service -> client`, convenções de nomenclatura, regras de dependência).
+> **Referência de estrutura do projeto:** Ao aplicar esta skill aos serviços deste projeto, siga a estrutura padrão de pacotes BFF em camadas definida em [folder-structure](../../.skills/folder-structure/SKILL.md) (`controller -> service -> client`, convenções de nomenclatura, regras de dependência). **Baseline real (precedência):** antes de implementar, consulte [`.estrutura-pastas-realizado.md`](../../.estrutura-pastas-realizado.md) — se existir e estiver preenchido, é a fonte de verdade e prevalece sobre o padrão prescritivo.
 
 ## Overview
 

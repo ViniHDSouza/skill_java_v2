@@ -58,11 +58,19 @@ function extractDescription(fm) {
 
 // --- Path adjustments ---
 
-const PATH_3LEVELS = '../../../.skills/folder-structure/SKILL.md';
-const PATH_2LEVELS = '../../.skills/folder-structure/SKILL.md';
+// Paths referenced from skills that are relative to the repo root. Source skills live
+// 3 levels deep (.agents/skills/<name>/SKILL.md); flat targets (.cursor, .github) are
+// 2 levels deep, so each repo-root link drops one "../".
+const PATH_ADJUSTMENTS = [
+  ['../../../.skills/folder-structure/SKILL.md', '../../.skills/folder-structure/SKILL.md'],
+  ['../../../.estrutura-pastas-realizado.md', '../../.estrutura-pastas-realizado.md'],
+];
 
 function adjustPath(content) {
-  return content.replace(new RegExp(PATH_3LEVELS.replace(/\./g, '\\.'), 'g'), PATH_2LEVELS);
+  return PATH_ADJUSTMENTS.reduce(
+    (acc, [from, to]) => acc.replace(new RegExp(from.replace(/\./g, '\\.'), 'g'), to),
+    content,
+  );
 }
 
 function stripReferencia(content) {
