@@ -1,0 +1,339 @@
+---
+applyWhen: "Apply Java 21 LTS modern features in Spring Boot 3.x applications, with focus on Virtual Threads (Project Loom), Records, Sealed Classes, Pattern Matching, SequencedCollections, and production best practices. Use this skill whenever the user mentions Java 21, Virtual Threads, Project Loom, structured concurrency, thread-per-request model, high throughput APIs, blocking I/O with virtual threads, Spring Boot 3.2+, @EnableVirtualThreads, migrating from Java 17 to 21, or wants to maximize performance in microservices with Spring Boot. Always use this skill for Java 21 performance and concurrency discussions."
+---
+
+
+# Java 21 + Spring Boot 3.x — Guia de Boas Práticas
+
+## Virtual Threads (Project Loom) — O que muda tudo
+
+### O Problema que Resolve
+No modelo tradicional (plataform threads), cada requisição HTTP bloqueia uma thread do SO durante I/O (banco de dados, chamadas HTTP, Kafka). Com 200 threads no pool e 500ms de latência por query, você trava no estouro de pool.
+
+Virtual Threads são threads ultra-leves gerenciadas pela JVM (não pelo SO). Você pode ter **milhões delas**. Quando bloqueiam em I/O, liberam a plataform thread subjacente automaticamente.
+
+### Habilitando no Spring Boot 3.2+
+
+```yaml
+# application.yml
+spring:
+  threads:
+    virtual:
+      enabled: true   # habilita Virtual Threads para Tomcat, Jetty e tasks agendadas
+```
+
+```java
+// Ou programaticamente (Spring Boot 3.2+)
+@Configuration
+public class ThreadConfig {
+
+    @Bean
+    public TomcatProtocolHandlerCustomizer<?> virtualThreadsProtocolHandlerCustomizer() {
+        return protocolHandler ->
+            protocolHandler.setExecutor(Executors.newVirtualThreadPerTaskExecutor());
+    }
+}
+```
+
+### Verificando que está funcionando
+```java
+@GetMapping("/thread-info")
+public Map<String, Object> threadInfo() {
+    Thread current = Thread.currentThread();
+    return Map.of(
+        "name", current.getName(),
+        "isVirtual", current.isVirtual(),   // deve retornar true
+        "threadId", current.threadId()
+    );
+}
+```
+
+### Regras de Ouro com Virtual Threads
+
+#### ✅ FAÇA — operações bloqueantes são seguras
+```java
+// Isso é CORRETO com virtual threads — bloquear em I/O é barato
+@Service
+public class OrderService {
+
+    public Order createOrder(CreateOrderCommand cmd) {
+        // Cada chamada bloqueante libera a carrier thread automaticamente
+        Customer customer = customerRepository.findById(cmd.customerId()); // I/O
+        inventory.reserve(cmd.items());                                     // I/O
+        Order order = orderRepository.save(new Order(customer, cmd.items())); // I/O
+        eventPublisher.publish(new OrderCreatedEvent(order.getId()));          // I/O
+        return order;
+    }
+}
+```
+
+#### ❌ EVITE — synchronized bloqueia a carrier thread
+```java
+// PROBLEMA: synchronized captura a carrier thread (platform thread)
+// Isso anula o benefício de virtual threads
+public synchronized void processOrder(Order order) {
+    // código crítico
+}
+
+// SOLUÇÃO: use ReentrantLock
+private final ReentrantLock lock = new ReentrantLock();
+
+public void processOrder(Order order) {
+    lock.lock();
+    try {
+        // código crítico — virtual thread cede a carrier thread durante espera
+    } finally {
+        lock.unlock();
+    }
+}
+```
+
+#### ❌ EVITE — ThreadLocal com pools de virtual threads
+```java
+// PROBLEMA: com virtual threads, ThreadLocal pode criar vazamentos de memória
+// se usado como cache (muitas virtual threads = muitos valores no ThreadLocal)
+
+// SOLUÇÃO: use ScopedValue (Java 21+) para dados imutáveis por escopo
+static final ScopedValue<User> CURRENT_USER = ScopedValue.newInstance();
+
+ScopedValue.where(CURRENT_USER, user)
+    .run(() -> processOrder(order));
+
+// Acesso dentro do escopo:
+User user = CURRENT_USER.get();
+```
+
+### Structured Concurrency (Java 21 Preview → Estável em 21+)
+```java
+// Executa tarefas paralelas com cancelamento automático em falha
+public OrderSummary buildOrderSummary(OrderId orderId) throws Exception {
+    try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+        Future<Order> order = scope.fork(() -> orderRepo.findById(orderId));
+        Future<Customer> customer = scope.fork(() -> customerRepo.findByOrderId(orderId));
+        Future<List<Payment>> payments = scope.fork(() -> paymentRepo.findByOrderId(orderId));
+
+        scope.join().throwIfFailed();  // aguarda todos; cancela se qualquer um falhar
+
+        return new OrderSummary(order.get(), customer.get(), payments.get());
+    }
+}
+```
+
+---
+
+## Records — Substitua DTO Boilerplate
+
+```java
+// Antes (Java 8 style):
+public class CreateOrderRequest {
+    private String customerId;
+    private List<OrderItemRequest> items;
+    // getters, setters, equals, hashCode, toString...
+}
+
+// Depois (Java 16+ Records):
+public record CreateOrderRequest(
+    @NotBlank String customerId,
+    @NotEmpty @Valid List<OrderItemRequest> items
+) {}
+
+// Records com validação customizada:
+public record Money(BigDecimal amount, String currency) {
+    public Money {
+        if (amount.compareTo(BigDecimal.ZERO) < 0)
+            throw new IllegalArgumentException("Valor não pode ser negativo");
+        if (currency == null || currency.isBlank())
+            throw new IllegalArgumentException("Moeda obrigatória");
+        amount = amount.setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public Money add(Money other) {
+        if (!this.currency.equals(other.currency))
+            throw new IllegalArgumentException("Moedas incompatíveis");
+        return new Money(this.amount.add(other.amount), this.currency);
+    }
+}
+```
+
+---
+
+## Sealed Classes — Hierarquias Fechadas (DDD Events/Results)
+
+```java
+// Modelando resultado de operação sem exceções
+public sealed interface OrderResult
+    permits OrderResult.Success, OrderResult.Failure {
+
+    record Success(Order order) implements OrderResult {}
+    record Failure(String reason, ErrorCode code) implements OrderResult {}
+}
+
+// Uso com pattern matching (sem instanceof explícito):
+OrderResult result = orderService.create(command);
+return switch (result) {
+    case OrderResult.Success(var order) -> ResponseEntity.ok(OrderResponse.from(order));
+    case OrderResult.Failure(var reason, var code) -> ResponseEntity
+        .status(code.httpStatus())
+        .body(new ErrorResponse(reason));
+};
+
+// Modelando Domain Events com sealed:
+public sealed interface OrderEvent
+    permits OrderCreated, OrderConfirmed, OrderCancelled, OrderShipped {}
+
+public record OrderCreated(OrderId orderId, Instant occurredAt) implements OrderEvent {}
+public record OrderCancelled(OrderId orderId, String reason, Instant occurredAt) implements OrderEvent {}
+```
+
+---
+
+## Pattern Matching — Switch com Types
+
+```java
+// Processador de eventos com pattern matching
+public void processEvent(OrderEvent event) {
+    switch (event) {
+        case OrderCreated e -> {
+            log.info("Pedido criado: {}", e.orderId());
+            notificationService.notifyOrderCreated(e);
+        }
+        case OrderCancelled e when e.reason().contains("fraude") -> {
+            log.warn("Cancelamento por fraude: {}", e.orderId());
+            fraudService.reportFraud(e);
+        }
+        case OrderCancelled e -> log.info("Pedido cancelado: {}", e.orderId());
+        case OrderShipped e -> trackingService.initializeTracking(e.orderId());
+        default -> log.debug("Evento não processado: {}", event.getClass().getSimpleName());
+    }
+}
+```
+
+---
+
+## SequencedCollections (Java 21)
+
+```java
+// Acesso garantido ao primeiro/último elemento
+List<Order> orders = orderRepository.findAllOrderByCreatedAtDesc();
+
+Order newest = orders.getFirst();   // antes: orders.get(0)
+Order oldest = orders.getLast();    // antes: orders.get(orders.size() - 1)
+
+// Iteração reversa sem criar nova lista
+for (Order order : orders.reversed()) {
+    processOrder(order);
+}
+```
+
+---
+
+## Observabilidade com Micrometer + Virtual Threads
+
+```java
+// Rastreamento de virtual threads com Micrometer
+@Configuration
+public class ObservabilityConfig {
+
+    @Bean
+    public ObservationRegistry observationRegistry() {
+        ObservationRegistry registry = ObservationRegistry.create();
+        registry.observationConfig()
+            .observationHandler(new DefaultMeterObservationHandler(meterRegistry));
+        return registry;
+    }
+}
+
+// Uso nos serviços:
+@Service
+@RequiredArgsConstructor
+public class OrderService {
+
+    private final ObservationRegistry observationRegistry;
+
+    public Order createOrder(CreateOrderCommand cmd) {
+        return Observation.createNotStarted("order.create", observationRegistry)
+            .lowCardinalityKeyValue("status", "pending")
+            .observe(() -> doCreateOrder(cmd));
+    }
+}
+```
+
+```yaml
+# application.yml — Observabilidade completa
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,threaddump,loggers
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  tracing:
+    sampling:
+      probability: 1.0   # 100% em dev, reduza em prod
+```
+
+---
+
+## Spring Boot 3.x — Configurações de Segurança Modernas
+
+```java
+// Spring Security 6 — Lambda DSL (sem WebSecurityConfigurerAdapter)
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        return http
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(s -> s.sessionCreationPolicy(STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/actuator/health/**").permitAll()
+                .requestMatchers("/api/public/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/orders").hasRole("VIEWER")
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
+            )
+            .oauth2ResourceServer(oauth2 -> oauth2
+                .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtConverter()))
+            )
+            .build();
+    }
+}
+```
+
+---
+
+## Checklist Java 21 em Produção
+
+### Performance
+- [ ] `spring.threads.virtual.enabled=true` habilitado
+- [ ] Nenhum `synchronized` em hot paths (use `ReentrantLock`)
+- [ ] ThreadLocal analisado — substituir por `ScopedValue` onde possível
+- [ ] Connection pools dimensionados para virtual threads (HikariCP: max 10-50, não 200+)
+- [ ] GC configurado (ZGC ou G1 recomendado para Java 21)
+
+### Código Moderno
+- [ ] DTOs e Value Objects usando `record`
+- [ ] Hierarquias de eventos/resultados usando `sealed`
+- [ ] Pattern matching em switches de tipo
+- [ ] `getFirst()`/`getLast()` no lugar de índices manuais
+
+### Observabilidade
+- [ ] Actuator expondo `/health/liveness` e `/health/readiness`
+- [ ] Micrometer + Prometheus configurado
+- [ ] Distributed tracing (Micrometer Tracing + Zipkin/Jaeger)
+- [ ] Correlation ID propagado em todos os logs
+
+## Referências Detalhadas
+
+- Para Virtual Threads avançado e benchmarks: `references/virtual-threads-deep.md`
+- Para migração Java 17 → 21: `references/migration-guide.md`
+- Para configuração GC em produção: `references/jvm-tuning.md`

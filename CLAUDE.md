@@ -1,0 +1,5 @@
+# CLAUDE.md
+
+Instruções deste projeto: ver [AGENTS.md](AGENTS.md) — base única compartilhada por todas as ferramentas.
+
+@AGENTS.md

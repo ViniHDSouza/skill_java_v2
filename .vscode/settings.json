@@ -1,0 +1,14 @@
+{
+  "github.copilot.chat.codeGeneration.instructions": [
+    { "file": ".github/copilot-instructions.md" }
+  ],
+  "github.copilot.chat.reviewSelection.instructions": [
+    { "file": ".github/instructions/secure-code-guardian.md" },
+    { "file": ".github/instructions/refactoring-analysis.md" }
+  ],
+  "github.copilot.chat.testGeneration.instructions": [
+    { "file": ".github/instructions/tdd.md" },
+    { "file": ".github/instructions/test-driven-development.md" },
+    { "file": ".github/instructions/testing-boss.md" }
+  ]
+}

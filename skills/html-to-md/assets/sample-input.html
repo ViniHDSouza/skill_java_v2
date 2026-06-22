@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sample Document</title>
+  <style>body { font-family: sans-serif; }</style>
+</head>
+<body>
+  <h1>Main Title</h1>
+  <p>This is a <strong>bold</strong> and <em>italic</em> paragraph with a
+     <a href="https://example.com">link to example</a> and some <code>inline code</code>.</p>
+
+  <h2>Formatting</h2>
+  <p><del>Strikethrough text</del> and <strong><em>bold italic</em></strong> combined.</p>
+
+  <h2>Lists</h2>
+  <h3>Unordered</h3>
+  <ul>
+    <li>Item one</li>
+    <li>Item two
+      <ul>
+        <li>Nested item A</li>
+        <li>Nested item B</li>
+      </ul>
+    </li>
+    <li>Item three</li>
+  </ul>
+
+  <h3>Ordered</h3>
+  <ol>
+    <li>First step</li>
+    <li>Second step</li>
+    <li>Third step</li>
+  </ol>
+
+  <h2>Table</h2>
+  <table>
+    <tr><th>Name</th><th>Role</th><th>Score</th></tr>
+    <tr><td>Alice</td><td>Engineer</td><td>95</td></tr>
+    <tr><td>Bob</td><td>Designer</td><td>88</td></tr>
+    <tr><td>Carol</td><td>Manager</td><td>92</td></tr>
+  </table>
+
+  <h2>Code Block</h2>
+  <pre><code>function greet(name) {
+  console.log(`Hello, ${name}!`);
+}
+
+greet("world");</code></pre>
+
+  <h2>Blockquote</h2>
+  <blockquote>
+    The best way to predict the future is to invent it. — Alan Kay
+  </blockquote>
+
+  <h2>Image and HR</h2>
+  <p>See the diagram below:</p>
+  <img src="diagram.png" alt="Architecture diagram">
+  <hr>
+  <p>End of document.</p>
+
+  <script>
+    // This script should be stripped from output
+    alert("This should not appear in Markdown");
+  </script>
+</body>
+</html>

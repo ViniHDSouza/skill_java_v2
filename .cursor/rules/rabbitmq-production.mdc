@@ -1,0 +1,373 @@
+---
+description: "Implement production-grade RabbitMQ patterns in Java/Spring Boot microservices using Spring AMQP. Use this skill when configuring RabbitMQ exchanges, queues, bindings, Dead Letter Queue (DLQ/DLX), retry with backoff, consumer scaling, message TTL, priority queues, publisher confirms, manual acknowledgment, poison message handling, monitoring with Micrometer, Spring Boot AMQP configuration, @RabbitListener, RabbitTemplate, or when troubleshooting message loss, consumer stalls, or high memory usage. Always use this skill for any RabbitMQ topic in Java/Spring Boot."
+globs: 
+alwaysApply: false
+---
+
+
+# RabbitMQ em Produção — Java/Spring Boot + Spring AMQP
+
+## Configuração Base
+
+```yaml
+# application.yml
+spring:
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASS:guest}
+    virtual-host: ${RABBITMQ_VHOST:/}
+    listener:
+      simple:
+        acknowledge-mode: manual        # SEMPRE manual em produção
+        prefetch: 10                    # quantas mensagens por consumer sem ack
+        concurrency: 3                  # consumers mínimos
+        max-concurrency: 10             # consumers máximos (auto-scaling)
+        retry:
+          enabled: false                # desativa retry automático — usamos DLX
+        default-requeue-rejected: false # mensagens rejeitadas vão para DLX
+    template:
+      mandatory: true                   # habilita publisher returns
+    publisher-confirm-type: correlated  # publisher confirms
+    publisher-returns: true
+```
+
+---
+
+## Topologia Completa: Exchange → Queue → DLX → DLQ
+
+```java
+@Configuration
+public class RabbitMQConfig {
+
+    // ===================== CONSTANTES =====================
+    public static final String ORDERS_EXCHANGE = "orders.exchange";
+    public static final String ORDERS_QUEUE    = "orders.queue";
+    public static final String ORDERS_DLX      = "orders.dlx";           // Dead Letter Exchange
+    public static final String ORDERS_DLQ      = "orders.dlq";           // Dead Letter Queue
+    public static final String ORDERS_RETRY_EXCHANGE = "orders.retry.exchange";
+    public static final String ORDERS_RETRY_QUEUE    = "orders.retry.queue";
+
+    // ===================== EXCHANGES =====================
+    @Bean
+    public TopicExchange ordersExchange() {
+        return ExchangeBuilder.topicExchange(ORDERS_EXCHANGE)
+            .durable(true)
+            .build();
+    }
+
+    @Bean
+    public DirectExchange ordersDlx() {
+        return ExchangeBuilder.directExchange(ORDERS_DLX)
+            .durable(true)
+            .build();
+    }
+
+    @Bean
+    public DirectExchange ordersRetryExchange() {
+        return ExchangeBuilder.directExchange(ORDERS_RETRY_EXCHANGE)
+            .durable(true)
+            .build();
+    }
+
+    // ===================== QUEUES =====================
+    @Bean
+    public Queue ordersQueue() {
+        return QueueBuilder.durable(ORDERS_QUEUE)
+            .withArgument("x-dead-letter-exchange", ORDERS_DLX)     // onde enviar mensagens rejeitadas
+            .withArgument("x-dead-letter-routing-key", ORDERS_DLQ)  // routing key na DLX
+            .withArgument("x-message-ttl", 300_000)                  // 5 min TTL (opcional)
+            .build();
+    }
+
+    @Bean
+    public Queue ordersDlq() {
+        // DLQ simples — não configura DLX própria para evitar loop infinito
+        return QueueBuilder.durable(ORDERS_DLQ)
+            .build();
+    }
+
+    @Bean
+    public Queue ordersRetryQueue() {
+        return QueueBuilder.durable(ORDERS_RETRY_QUEUE)
+            .withArgument("x-dead-letter-exchange", ORDERS_EXCHANGE)   // volta para fila original após TTL
+            .withArgument("x-dead-letter-routing-key", "orders.created")
+            .withArgument("x-message-ttl", 30_000)                      // espera 30s antes de retentar
+            .build();
+    }
+
+    // ===================== BINDINGS =====================
+    @Bean
+    public Binding ordersBinding() {
+        return BindingBuilder.bind(ordersQueue())
+            .to(ordersExchange())
+            .with("orders.#");  // routing key padrão
+    }
+
+    @Bean
+    public Binding ordersDlqBinding() {
+        return BindingBuilder.bind(ordersDlq())
+            .to(ordersDlx())
+            .with(ORDERS_DLQ);
+    }
+
+    @Bean
+    public Binding ordersRetryBinding() {
+        return BindingBuilder.bind(ordersRetryQueue())
+            .to(ordersRetryExchange())
+            .with(ORDERS_RETRY_QUEUE);
+    }
+}
+```
+
+---
+
+## Retry com Backoff Exponencial via DLX
+
+```java
+@Component
+@RequiredArgsConstructor
+@Slf4j
+public class OrderMessageConsumer {
+
+    private final OrderService orderService;
+    private final RabbitTemplate rabbitTemplate;
+
+    private static final int MAX_RETRIES = 3;
+    private static final String RETRY_COUNT_HEADER = "x-retry-count";
+
+    @RabbitListener(queues = RabbitMQConfig.ORDERS_QUEUE)
+    public void consume(
+            Message message,
+            Channel channel,
+            @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) throws IOException {
+
+        String body = new String(message.getBody(), StandardCharsets.UTF_8);
+        int retryCount = getRetryCount(message);
+
+        log.info("Processando mensagem: deliveryTag={}, retryCount={}", deliveryTag, retryCount);
+
+        try {
+            OrderCreatedEvent event = objectMapper.readValue(body, OrderCreatedEvent.class);
+            orderService.processOrderCreated(event);
+            channel.basicAck(deliveryTag, false);  // sucesso — remove da fila
+            log.info("Mensagem processada com sucesso: deliveryTag={}", deliveryTag);
+
+        } catch (NonRetryableException e) {
+            log.error("Erro não retriável — enviando direto para DLQ: {}", e.getMessage());
+            channel.basicNack(deliveryTag, false, false);  // false = não reencfileira → vai para DLX
+
+        } catch (Exception e) {
+            if (retryCount >= MAX_RETRIES) {
+                log.error("Máximo de retries atingido ({}) — enviando para DLQ", MAX_RETRIES, e);
+                channel.basicNack(deliveryTag, false, false);  // vai para DLQ
+            } else {
+                log.warn("Erro retriável (tentativa {}/{}) — reenviando com delay",
+                    retryCount + 1, MAX_RETRIES, e);
+                channel.basicAck(deliveryTag, false);  // ack para remover da fila atual
+                requeueWithDelay(message, retryCount + 1);  // envia para retry queue
+            }
+        }
+    }
+
+    private void requeueWithDelay(Message originalMessage, int retryCount) {
+        MessageProperties props = new MessageProperties();
+        props.getHeaders().putAll(originalMessage.getMessageProperties().getHeaders());
+        props.getHeaders().put(RETRY_COUNT_HEADER, retryCount);
+        props.setContentType(MessageProperties.CONTENT_TYPE_JSON);
+
+        Message retryMessage = new Message(originalMessage.getBody(), props);
+        // Envia para retry queue (que tem TTL e redireciona de volta para fila principal)
+        rabbitTemplate.send(
+            RabbitMQConfig.ORDERS_RETRY_EXCHANGE,
+            RabbitMQConfig.ORDERS_RETRY_QUEUE,
+            retryMessage
+        );
+    }
+
+    private int getRetryCount(Message message) {
+        Object count = message.getMessageProperties().getHeaders().get(RETRY_COUNT_HEADER);
+        return count == null ? 0 : (Integer) count;
+    }
+
+    // Consumer da DLQ — processa mensagens que falharam definitivamente
+    @RabbitListener(queues = RabbitMQConfig.ORDERS_DLQ)
+    public void consumeDlq(
+            Message message,
+            Channel channel,
+            @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) throws IOException {
+
+        log.error("Mensagem na DLQ — ação manual necessária: {}",
+            new String(message.getBody(), StandardCharsets.UTF_8));
+
+        // Salvar para análise / alertar time de operações
+        dlqEventRepository.save(DlqEvent.from(message));
+        channel.basicAck(deliveryTag, false);
+    }
+}
+```
+
+---
+
+## Publisher Confirms — Garantia de Entrega
+
+```java
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class OrderEventPublisher {
+
+    private final RabbitTemplate rabbitTemplate;
+
+    @PostConstruct
+    public void configure() {
+        // Confirma que mensagem chegou ao broker
+        rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
+            if (ack) {
+                log.debug("Mensagem confirmada pelo broker: {}", correlationData.getId());
+            } else {
+                log.error("Broker recusou mensagem: id={}, causa={}", correlationData.getId(), cause);
+                // Implementar reenvio ou alertar
+            }
+        });
+
+        // Confirma que mensagem foi roteada para alguma fila
+        rabbitTemplate.setReturnsCallback(returned -> {
+            log.error("Mensagem não roteada para nenhuma fila: exchange={}, routingKey={}, replyText={}",
+                returned.getExchange(), returned.getRoutingKey(), returned.getReplyText());
+        });
+    }
+
+    public void publishOrderCreated(Order order) {
+        OrderCreatedEvent event = OrderCreatedEvent.from(order);
+
+        CorrelationData correlationData = new CorrelationData(order.getId().toString());
+        MessageProperties props = new MessageProperties();
+        props.setCorrelationId(order.getId().toString());
+        props.setContentType(MessageProperties.CONTENT_TYPE_JSON);
+        props.setDeliveryMode(MessageDeliveryMode.PERSISTENT);  // sobrevive a restart do broker
+
+        Message message = new Message(serialize(event), props);
+
+        rabbitTemplate.convertAndSend(
+            RabbitMQConfig.ORDERS_EXCHANGE,
+            "orders.created",
+            message,
+            correlationData
+        );
+
+        log.info("Evento publicado: orderId={}", order.getId());
+    }
+}
+```
+
+---
+
+## Consumer Scaling — Configuração Dinâmica
+
+```java
+@Configuration
+public class RabbitListenerConfig {
+
+    @Bean
+    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
+            ConnectionFactory connectionFactory) {
+
+        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+        factory.setConnectionFactory(connectionFactory);
+        factory.setAcknowledgeMode(AcknowledgeMode.MANUAL);
+        factory.setPrefetchCount(10);
+        factory.setConcurrentConsumers(3);      // consumidores iniciais
+        factory.setMaxConcurrentConsumers(20);  // escala até 20 sob carga
+
+        // Reduz consumidores em ociosidade
+        factory.setConsumerStartTimeout(60_000L);
+
+        // Métricas com Micrometer
+        factory.setMicrometerEnabled(true);
+
+        return factory;
+    }
+}
+```
+
+---
+
+## Monitoramento com Micrometer
+
+```java
+@Component
+@RequiredArgsConstructor
+public class RabbitMQMetrics {
+
+    private final RabbitAdmin rabbitAdmin;
+    private final MeterRegistry meterRegistry;
+
+    @Scheduled(fixedDelay = 30_000)
+    public void collectQueueMetrics() {
+        List.of(
+            RabbitMQConfig.ORDERS_QUEUE,
+            RabbitMQConfig.ORDERS_DLQ,
+            RabbitMQConfig.ORDERS_RETRY_QUEUE
+        ).forEach(queueName -> {
+            Properties props = rabbitAdmin.getQueueProperties(queueName);
+            if (props != null) {
+                int messageCount = (Integer) props.get(RabbitAdmin.QUEUE_MESSAGE_COUNT);
+                int consumerCount = (Integer) props.get(RabbitAdmin.QUEUE_CONSUMER_COUNT);
+
+                Gauge.builder("rabbitmq.queue.messages", () -> messageCount)
+                    .tag("queue", queueName)
+                    .description("Mensagens pendentes na fila")
+                    .register(meterRegistry);
+
+                Gauge.builder("rabbitmq.queue.consumers", () -> consumerCount)
+                    .tag("queue", queueName)
+                    .description("Consumidores ativos")
+                    .register(meterRegistry);
+
+                // Alerta se DLQ tem mensagens
+                if (queueName.equals(RabbitMQConfig.ORDERS_DLQ) && messageCount > 0) {
+                    log.warn("DLQ contém {} mensagens — verificação necessária", messageCount);
+                }
+            }
+        });
+    }
+}
+```
+
+---
+
+## Checklist RabbitMQ em Produção
+
+### Topologia
+- [ ] `x-dead-letter-exchange` configurado em todas as filas de processamento
+- [ ] DLQ separada por domínio (não uma DLQ global)
+- [ ] Retry queue com TTL para backoff
+- [ ] Exchanges `durable=true` e filas `durable=true`
+- [ ] `x-message-ttl` configurado para evitar acúmulo infinito
+
+### Consumer
+- [ ] `acknowledge-mode: manual` — NUNCA auto
+- [ ] `default-requeue-rejected: false` — mensagens rejeitadas vão para DLX
+- [ ] Prefetch dimensionado (10-50 geralmente)
+- [ ] Max-retries controlado via header `x-retry-count`
+- [ ] Consumer da DLQ para análise e alertas
+
+### Produtor
+- [ ] `publisher-confirm-type: correlated` habilitado
+- [ ] `publisher-returns: true` habilitado
+- [ ] `DeliveryMode.PERSISTENT` em mensagens importantes
+- [ ] CorrelationId para rastreamento
+
+### Operacional
+- [ ] Alertas para DLQ com mensagens > 0
+- [ ] Monitoramento de consumer count por fila
+- [ ] Métricas de mensagens pendentes no Grafana
+- [ ] Procedimento documentado para reprocessar DLQ
+
+## Referências
+
+- Padrões avançados de roteamento: `references/exchange-patterns.md`
+- Integração com Spring Cloud Stream: `references/cloud-stream.md`
+- Troubleshooting e diagnóstico: `references/troubleshooting.md`
