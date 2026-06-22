@@ -109,6 +109,7 @@ Cada skill vive em `skills/<nome>/SKILL.md`. A fonte de verdade é `.agents/skil
 | `mongodb-schema-design` | MongoDB schema design patterns and anti-patterns. | [skills/mongodb-schema-design/SKILL.md](skills/mongodb-schema-design/SKILL.md) |
 | `mongodb-search-and-ai` | Guides MongoDB users through implementing and optimizing Atlas Search (full-text), Vector Search (semantic), and Hybrid Search solutions. | [skills/mongodb-search-and-ai/SKILL.md](skills/mongodb-search-and-ai/SKILL.md) |
 | `no-workarounds` | Enforce root-cause fixes over workarounds, hacks, and symptom patches in all software engineering tasks. | [skills/no-workarounds/SKILL.md](skills/no-workarounds/SKILL.md) |
+| `prompt-enhancement` | Transforms vague or poorly structured prompts into structured prompts using XML and Markdown. | [skills/prompt-enhancement/SKILL.md](skills/prompt-enhancement/SKILL.md) |
 | `rabbitmq-production` | Implement production-grade RabbitMQ patterns in Java/Spring Boot microservices using Spring AMQP. | [skills/rabbitmq-production/SKILL.md](skills/rabbitmq-production/SKILL.md) |
 | `redis-clustering` | Redis Cluster and replication guidance covering hash tags for multi-key operations, avoiding CROSSSLOT errors, and reading from replicas to scale read-heavy… | [skills/redis-clustering/SKILL.md](skills/redis-clustering/SKILL.md) |
 | `redis-connections` | Redis client and connection guidance covering connection pooling, multiplexing, pipelining, client-side caching with RESP3, avoiding slow commands (KEYS… | [skills/redis-connections/SKILL.md](skills/redis-connections/SKILL.md) |
@@ -196,7 +197,7 @@ Checklist obrigatório antes de abrir o PR:
 ```text
 skill_java_v2/
 ├── .skills/folder-structure/   # regra obrigatória de estrutura (camadas BFF)
-├── skills/                     # 67 skills — fonte legível (SKILL.md + scripts/assets)
+├── skills/                     # 68 skills — fonte legível (SKILL.md + scripts/assets)
 ├── .agents/skills/             # fonte de verdade das skills
 ├── .claude/ .codex/ .devin/ .opencode/   # skills por ferramenta (cópia integral)
 ├── .cursor/rules/              # skills como regras .mdc
