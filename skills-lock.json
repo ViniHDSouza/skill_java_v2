@@ -37,6 +37,12 @@
       "skillPath": "skills/chaos-engineer/SKILL.md",
       "computedHash": "504c11eca1046d246f33a8e3e2a1d024c3dfd4398289f411f4ea15247962b88b"
     },
+    "creating-spec": {
+      "source": "pedronauck/skills",
+      "sourceType": "github",
+      "skillPath": "skills/community/creating-spec/SKILL.md",
+      "computedHash": "635b1c2e87d4c41867b2e56ceebbf1db4a9a00c88c68752638c3844c2432f47b"
+    },
     "devops-engineer": {
       "source": "pedronauck/skills",
       "sourceType": "github",
@@ -330,6 +336,12 @@
       "sourceType": "github",
       "skillPath": "skills/engineering/to-prd/SKILL.md",
       "computedHash": "7e1950ebb84721293b913d54481e0723172abb23fa5e0d0d488594ca45ffb421"
+    },
+    "to-prompt": {
+      "source": "pedronauck/skills",
+      "sourceType": "github",
+      "skillPath": "skills/mine/to-prompt/SKILL.md",
+      "computedHash": "8046c3d84ed15e8a4720deb40e4247458206a2f57898ae279c0d1b2c32d0499c"
     },
     "unit-test-caching": {
       "source": "giuseppe-trisciuoglio/developer-kit",

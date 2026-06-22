@@ -1,8 +1,8 @@
 # AGENTS.md
 
-Conjunto **reutilizável** de skills e regras aplicado a projetos **backend Java / Spring Boot** (Maven) — serviços BFF (Backend for Frontend) em arquitetura em camadas.
+Coleção **reutilizável** de skills e regras para desenvolvimento de software, aplicável a **qualquer tipo de projeto**. O perfil principal é **backend Java / Spring Boot** (Maven) — serviços BFF (Backend for Frontend) em arquitetura em camadas —, mas boa parte das skills (specs, prompts, testes, arquitetura, DevOps, segurança, dados) é transversal e serve a outras linguagens e stacks.
 
-Este é o ponto de entrada para agentes e contribuidores em qualquer projeto que adote estas skills. Aplique as regras ao **criar, manter, reorganizar ou revisar** código. **Não duplique aqui o conteúdo das skills/regras** — consulte os arquivos referenciados.
+Este é o ponto de entrada para agentes e contribuidores em qualquer projeto que adote estas skills. Aplique as regras ao **criar, manter, reorganizar ou revisar** código — as regras obrigatórias e os comandos abaixo valem para o perfil **Java / Spring Boot**; em outras stacks, use as skills transversais aplicáveis. **Não duplique aqui o conteúdo das skills/regras** — consulte os arquivos referenciados.
 
 > **Base compartilhada.** Este arquivo é a fonte única de instruções, usada por Claude Code (via `CLAUDE.md`), Codex, OpenCode, GitHub Copilot (via `.github/copilot-instructions.md`) e VS Code. Regenere os pontos de entrada com `node scripts/generate-agents.mjs`.
 
@@ -74,6 +74,7 @@ Cada skill vive em `skills/<nome>/SKILL.md`. A fonte de verdade é `.agents/skil
 | `azure-messaging` | Troubleshoot and resolve issues with Azure Messaging SDKs for Event Hubs and Service Bus. | [skills/azure-messaging/SKILL.md](skills/azure-messaging/SKILL.md) |
 | `azure-reliability` | Assess and improve the reliability posture of PaaS Applications (Azure Functions and Azure App Service). | [skills/azure-reliability/SKILL.md](skills/azure-reliability/SKILL.md) |
 | `chaos-engineer` | Designs chaos experiments, creates failure injection frameworks, and facilitates game day exercises for distributed systems — producing runbooks, experiment… | [skills/chaos-engineer/SKILL.md](skills/chaos-engineer/SKILL.md) |
+| `creating-spec` | Create comprehensive technical specs for SDK gaps, feature modules, or system centralization efforts. | [skills/creating-spec/SKILL.md](skills/creating-spec/SKILL.md) |
 | `devops-engineer` | Creates Dockerfiles, configures CI/CD pipelines, writes Kubernetes manifests, and generates Terraform/Pulumi infrastructure templates. | [skills/devops-engineer/SKILL.md](skills/devops-engineer/SKILL.md) |
 | `git-rebase` | Intelligently handle git rebase operations and resolve merge conflicts while preserving features and maintaining code quality. | [skills/git-rebase/SKILL.md](skills/git-rebase/SKILL.md) |
 | `hexagonal-architecture` | Apply Hexagonal Architecture (Ports & Adapters) in Java 17/21 Spring Boot microservices. | [skills/hexagonal-architecture/SKILL.md](skills/hexagonal-architecture/SKILL.md) |
@@ -129,6 +130,7 @@ Cada skill vive em `skills/<nome>/SKILL.md`. A fonte de verdade é `.agents/skil
 | `testing-boss` | Comprehensive testing doctrine for software and AI systems — covers positive patterns, anti-patterns, gates for coding agents writing tests, CI discipline, and… | [skills/testing-boss/SKILL.md](skills/testing-boss/SKILL.md) |
 | `to-issues` | Break a plan, spec, or PRD into independently-grabbable issues on the project issue tracker using tracer-bullet vertical slices. | [skills/to-issues/SKILL.md](skills/to-issues/SKILL.md) |
 | `to-prd` | Turn the current conversation into a PRD and publish it to the project issue tracker — no interview, just synthesis of what you've already discussed. | [skills/to-prd/SKILL.md](skills/to-prd/SKILL.md) |
+| `to-prompt` | Transform code, issues, or context into a detailed prompt/context for another LLM to fix or implement. | [skills/to-prompt/SKILL.md](skills/to-prompt/SKILL.md) |
 | `unit-test-caching` | Provides patterns for unit testing Spring Cache annotations (@Cacheable, @CachePut, @CacheEvict). | [skills/unit-test-caching/SKILL.md](skills/unit-test-caching/SKILL.md) |
 | `verification-before-completion` | Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output… | [skills/verification-before-completion/SKILL.md](skills/verification-before-completion/SKILL.md) |
 | `webapp-testing` | Toolkit for interacting with and testing local web applications using Playwright. | [skills/webapp-testing/SKILL.md](skills/webapp-testing/SKILL.md) |
@@ -191,7 +193,7 @@ Checklist obrigatório antes de abrir o PR:
 ```text
 skill_java_v2/
 ├── .skills/folder-structure/   # regra obrigatória de estrutura (camadas BFF)
-├── skills/                     # 64 skills — fonte legível (SKILL.md + scripts/assets)
+├── skills/                     # 66 skills — fonte legível (SKILL.md + scripts/assets)
 ├── .agents/skills/             # fonte de verdade das skills
 ├── .claude/ .codex/ .devin/ .opencode/   # skills por ferramenta (cópia integral)
 ├── .cursor/rules/              # skills como regras .mdc

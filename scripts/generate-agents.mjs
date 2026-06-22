@@ -73,9 +73,9 @@ const skillRows = skills.map(name =>
 const L = [
   "# AGENTS.md",
   "",
-  "Conjunto **reutilizável** de skills e regras aplicado a projetos **backend Java / Spring Boot** (Maven) — serviços BFF (Backend for Frontend) em arquitetura em camadas.",
+  "Coleção **reutilizável** de skills e regras para desenvolvimento de software, aplicável a **qualquer tipo de projeto**. O perfil principal é **backend Java / Spring Boot** (Maven) — serviços BFF (Backend for Frontend) em arquitetura em camadas —, mas boa parte das skills (specs, prompts, testes, arquitetura, DevOps, segurança, dados) é transversal e serve a outras linguagens e stacks.",
   "",
-  "Este é o ponto de entrada para agentes e contribuidores em qualquer projeto que adote estas skills. Aplique as regras ao **criar, manter, reorganizar ou revisar** código. **Não duplique aqui o conteúdo das skills/regras** — consulte os arquivos referenciados.",
+  "Este é o ponto de entrada para agentes e contribuidores em qualquer projeto que adote estas skills. Aplique as regras ao **criar, manter, reorganizar ou revisar** código — as regras obrigatórias e os comandos abaixo valem para o perfil **Java / Spring Boot**; em outras stacks, use as skills transversais aplicáveis. **Não duplique aqui o conteúdo das skills/regras** — consulte os arquivos referenciados.",
   "",
   "> **Base compartilhada.** Este arquivo é a fonte única de instruções, usada por Claude Code (via `CLAUDE.md`), Codex, OpenCode, GitHub Copilot (via `.github/copilot-instructions.md`) e VS Code. Regenere os pontos de entrada com `node scripts/generate-agents.mjs`.",
   "",

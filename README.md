@@ -1,8 +1,10 @@
 # skill_java_v2
 
-Coleção de **64 skills** para desenvolvimento backend **Java / Spring Boot** (serviços BFF em
-arquitetura em camadas), prontas para instalar em qualquer agente de código — Claude Code, Cursor,
-GitHub Copilot, Cline, Continue, Codex, OpenCode, Devin.
+Coleção de **66 skills** para desenvolvimento de software, aplicável a **qualquer tipo de projeto**.
+O perfil principal é backend **Java / Spring Boot** (serviços BFF em arquitetura em camadas), mas boa
+parte das skills (specs, prompts, testes, arquitetura, DevOps, segurança, dados) é transversal e
+serve a outras linguagens e stacks. Prontas para instalar em qualquer agente de código — Claude Code,
+Cursor, GitHub Copilot, Cline, Continue, Codex, OpenCode, Devin.
 
 As regras do projeto e o índice completo das skills estão em **[AGENTS.md](AGENTS.md)**.
 
@@ -108,7 +110,7 @@ skills são consumidas como *custom instructions* do GitHub Copilot. Este reposi
 artefatos:
 
 - `.github/copilot-instructions.md` — instruções globais (base do [AGENTS.md](AGENTS.md)).
-- `.github/instructions/<skill>.md` — uma instrução por skill (64 arquivos).
+- `.github/instructions/<skill>.md` — uma instrução por skill (66 arquivos).
 - `.vscode/settings.json` — liga esses arquivos ao Copilot Chat
   (`github.copilot.chat.codeGeneration/reviewSelection/testGeneration.instructions`).
 - `.vscode/extensions.json` — extensões recomendadas.
@@ -133,9 +135,11 @@ cp -r skills/hexagonal-architecture ~/.claude/skills/hexagonal-architecture
 
 ## Skills disponíveis
 
-São 64 skills cobrindo Java 21, Spring Boot 3.x, JPA/Hibernate, Kafka, RabbitMQ, MongoDB, Redis,
+São 66 skills cobrindo Java 21, Spring Boot 3.x, JPA/Hibernate, Kafka, RabbitMQ, MongoDB, Redis,
 Kubernetes, ArgoCD, Azure, testes (JUnit/Mockito/Testcontainers/Playwright), arquitetura
-(hexagonal, microsserviços, DDD), segurança e autoria de skills.
+(hexagonal, microsserviços, DDD), segurança, autoria de skills e de specs/PRDs e engenharia de prompts.
+Várias delas são transversais (specs, prompts, testes, arquitetura, DevOps, segurança, dados) e se
+aplicam a projetos de qualquer linguagem ou stack, não só Java/Spring Boot.
 
 A lista completa, com a descrição de cada uma, está na tabela de **[AGENTS.md](AGENTS.md#skills-disponíveis)**.
 
