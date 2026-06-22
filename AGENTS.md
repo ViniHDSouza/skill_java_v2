@@ -31,6 +31,8 @@ mvn spring-boot:run    # executa a aplicação
 ## Arquitetura
 
 - **Obrigatória:** arquitetura em camadas BFF (`controller → service → client`) — ver [.skills/folder-structure/SKILL.md](.skills/folder-structure/SKILL.md).
+- **Baseline real (precedência):** antes de implementar qualquer PRD/task, consulte [.estrutura-pastas-realizado.md](.estrutura-pastas-realizado.md) (gerado pela skill `estrutura-pastas`). **Se existir e estiver preenchido, ele é a fonte de verdade da estrutura real e tem precedência sobre o padrão prescritivo.** Se ausente/vazio, siga o padrão prescritivo e gere a baseline com a skill `estrutura-pastas`.
+- **Análise dos padrões:** ver [docs/skills-arquitetura.md](docs/skills-arquitetura.md) (Camadas BFF vs. Hexagonal e quando usar cada um).
 - **Padrões disponíveis via skills:** Hexagonal (`hexagonal-architecture`), DDD e decomposição de microsserviços (`microservices-architect`), Event-Driven Architecture (`spring-boot-event-driven-patterns`), Saga (`spring-boot-saga-pattern`).
 
 ## Regras obrigatórias
