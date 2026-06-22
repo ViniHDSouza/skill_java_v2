@@ -4,6 +4,8 @@ Conjunto **reutilizável** de skills e regras aplicado a projetos **backend Java
 
 Este é o ponto de entrada para agentes e contribuidores em qualquer projeto que adote estas skills. Aplique as regras ao **criar, manter, reorganizar ou revisar** código. **Não duplique aqui o conteúdo das skills/regras** — consulte os arquivos referenciados.
 
+> **Base compartilhada.** Este arquivo é a fonte única de instruções, usada por Claude Code (via `CLAUDE.md`), Codex, OpenCode, GitHub Copilot (via `.github/copilot-instructions.md`) e VS Code. Regenere os pontos de entrada com `node scripts/generate-agents.mjs`.
+
 ## Stack (coberto pelas skills)
 
 | Camada | Tecnologias | Skills |
@@ -162,6 +164,27 @@ mvn checkstyle:check    # valida o estilo de código
 - Seguir o **Spring Java Format**; imports absolutos (não relativos).
 - Javadoc nas APIs públicas.
 - Convenções de nomenclatura conforme as **Regras obrigatórias** acima.
+
+## Qualidade e segurança
+
+```bash
+mvn sonar:sonar              # análise estática / quality gate (SonarQube)
+mvn dependency-check:check   # varredura de vulnerabilidades (OWASP Dependency-Check)
+```
+
+- OWASP Top 10, validação de entrada e nenhum segredo hardcoded (use variáveis de ambiente / cofre).
+- Skills de apoio: `secure-code-guardian`, `microservices-review`.
+
+## Pull Request
+
+Checklist obrigatório antes de abrir o PR:
+
+- [ ] Testes passando (`mvn verify`).
+- [ ] Cobertura ≥ 80%.
+- [ ] Sonar sem bugs/code smells críticos.
+- [ ] Sem vulnerabilidades High/Critical.
+- [ ] Documentação atualizada.
+- [ ] Commits no padrão **Conventional Commits**.
 
 ## Estrutura do repositório
 

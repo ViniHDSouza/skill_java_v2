@@ -77,6 +77,8 @@ const L = [
   "",
   "Este é o ponto de entrada para agentes e contribuidores em qualquer projeto que adote estas skills. Aplique as regras ao **criar, manter, reorganizar ou revisar** código. **Não duplique aqui o conteúdo das skills/regras** — consulte os arquivos referenciados.",
   "",
+  "> **Base compartilhada.** Este arquivo é a fonte única de instruções, usada por Claude Code (via `CLAUDE.md`), Codex, OpenCode, GitHub Copilot (via `.github/copilot-instructions.md`) e VS Code. Regenere os pontos de entrada com `node scripts/generate-agents.mjs`.",
+  "",
   "## Stack (coberto pelas skills)",
   "",
   "| Camada | Tecnologias | Skills |",
@@ -173,6 +175,27 @@ const L = [
   "- Javadoc nas APIs públicas.",
   "- Convenções de nomenclatura conforme as **Regras obrigatórias** acima.",
   "",
+  "## Qualidade e segurança",
+  "",
+  "```bash",
+  "mvn sonar:sonar              # análise estática / quality gate (SonarQube)",
+  "mvn dependency-check:check   # varredura de vulnerabilidades (OWASP Dependency-Check)",
+  "```",
+  "",
+  "- OWASP Top 10, validação de entrada e nenhum segredo hardcoded (use variáveis de ambiente / cofre).",
+  "- Skills de apoio: `secure-code-guardian`, `microservices-review`.",
+  "",
+  "## Pull Request",
+  "",
+  "Checklist obrigatório antes de abrir o PR:",
+  "",
+  "- [ ] Testes passando (`mvn verify`).",
+  "- [ ] Cobertura ≥ 80%.",
+  "- [ ] Sonar sem bugs/code smells críticos.",
+  "- [ ] Sem vulnerabilidades High/Critical.",
+  "- [ ] Documentação atualizada.",
+  "- [ ] Commits no padrão **Conventional Commits**.",
+  "",
   "## Estrutura do repositório",
   "",
   "```text",
@@ -198,5 +221,44 @@ const L = [
   "",
 ];
 
-fs.writeFileSync(path.join(ROOT, 'AGENTS.md'), L.join('\n'), 'utf8');
-console.log('AGENTS.md gerado: ' + skills.length + ' skills indexadas.');
+const base = L.join('\n');
+
+// Ponteiro: arquivo curto que referencia/importa a base (tática do CLAUDE.md).
+// Evita duplicar conteúdo — a fonte única é o AGENTS.md.
+function pointer(title) {
+  return [
+    '# ' + title,
+    '',
+    'Instruções deste projeto: ver [AGENTS.md](AGENTS.md) — base única compartilhada por todas as ferramentas.',
+    '',
+    '@AGENTS.md',
+    '',
+  ].join('\n');
+}
+
+// 1. AGENTS.md (raiz) — base canônica (Codex + OpenCode leem nativamente)
+fs.writeFileSync(path.join(ROOT, 'AGENTS.md'), base, 'utf8');
+
+// 2. Pontos de entrada por ferramenta — todos ponteiros para a base (DRY)
+const pointers = {
+  'CLAUDE.md': 'CLAUDE.md',                 // Claude Code
+  '.clinerules': 'Cline Rules',             // Cline
+  '.continuerules': 'Continue Rules',       // Continue
+  '.cursorrules': 'Cursor Rules',           // Cursor (legado; rules modulares em .cursor/rules/)
+};
+for (const [file, title] of Object.entries(pointers)) {
+  fs.writeFileSync(path.join(ROOT, file), pointer(title), 'utf8');
+}
+
+// 3. .github/copilot-instructions.md — Copilot/VS Code NÃO seguem import nem ponteiro:
+//    o conteúdo é injetado literalmente no contexto, então recebe cópia integral da base.
+const copilot = base +
+  '\n\n---\n\n' +
+  'Para arquivos de instrução modulares por skill, ver `.github/instructions/`.\n';
+fs.mkdirSync(path.join(ROOT, '.github'), { recursive: true });
+fs.writeFileSync(path.join(ROOT, '.github', 'copilot-instructions.md'), copilot, 'utf8');
+
+console.log('Gerados a partir da base (' + skills.length + ' skills):');
+console.log('  base:      AGENTS.md');
+console.log('  ponteiros: ' + Object.keys(pointers).join(', '));
+console.log('  cópia:     .github/copilot-instructions.md (Copilot exige conteúdo inline)');
